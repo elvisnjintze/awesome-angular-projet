@@ -7,13 +7,14 @@ import { PostsResolver } from './resolvers/posts.resolver';
 import { CoreModule } from '../core/core.module';
 import { PostListComponent } from './components/post-list/post-list.component';
 import { PostListItemComponent } from './components/post-list-item/post-list-item.component';
+import { SharedModule } from '../shared/shared.module';
 
 
 @NgModule({
   declarations: [],
   imports: [
     CommonModule,
-    SocialMediaRoutingModule,CoreModule
+    SocialMediaRoutingModule,CoreModule,SharedModule,PostListItemComponent
   ],
   //Puisque SocialMediaModule est lazy-loaded et que PostsService
   // ne sert qu'à l'intérieur de SocialMediaModule, ça ne nous 
@@ -23,8 +24,6 @@ import { PostListItemComponent } from './components/post-list-item/post-list-ite
 
 //Pour cela, vous allez ajouter un tableau providers à 
 //SocialMediaModule :
-
-
   
   providers: [PostsService,PostsResolver]
 })

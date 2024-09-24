@@ -1,1 +1,22 @@
-<p>{{ post.title | titlecase }}</p>
+<mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        <span>{{ post.title | titlecase }}</span>
+      </mat-card-title>
+      <mat-card-subtitle>
+        <span>{{ post.createdDate | date }}</span>
+      </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <img mat-card-image *ngIf="post.imageUrl as imageUrl" [src]="imageUrl" [alt]="post.title">
+      <br>
+      <span class="post-content">{{ post.content }}</span>
+    </mat-card-content>
+    <mat-card-actions>
+      <!--Le nom  newComment  vient du nom du  @Output  dans
+       CommentsComponent, et la syntaxe  $event  permet de capter
+       le contenu d'un événement. Dans ce cas, il s'agit 
+       du commentaire de l'utilisateur.-->
+      <app-comments [comments]="post.comments" (newComment)="onNewComment($event)"></app-comments>
+    </mat-card-actions>
+  </mat-card>

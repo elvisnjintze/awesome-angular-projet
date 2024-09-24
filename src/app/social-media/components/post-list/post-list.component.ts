@@ -4,6 +4,7 @@ import { map, Observable } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { PostListItemComponent } from '../post-list-item/post-list-item.component';
 import { CommonModule } from '@angular/common';
+import { PostsService } from '../../services/posts.service';
 
 @Component({
   selector: 'app-post-list',
@@ -14,11 +15,19 @@ import { CommonModule } from '@angular/common';
 })
 export class PostListComponent implements OnInit{
   posts$!: Observable<Post[]>
-
-  constructor(private route: ActivatedRoute){}
+  //on crée un constructeur avec la route actve(l'url active)
+  //où nuos allons recupérer les données portant la cl' posts
+  //ensuite nous avons l'ensemble des données potsServices (tableau)
+  //sur lequel nous allons appeler la methode addNewcomment pour 
+  //ajouter un commentaire à un post donné
+  constructor(private route: ActivatedRoute, private postsService: PostsService){}
 
   ngOnInit(): void {
     this.posts$ = this.route.data.pipe(map(data=>data['posts']))
   }
-
+  //cette méthode permet de recupérer un commentaire posté sur le
+  //comment enfant PostListItemComponent avec la directive @Ouput
+  onPostCommented(postCommented:{comment:String, postId:number}):void{
+    this.postsService.addNewComment(postCommented);
+  }
 }

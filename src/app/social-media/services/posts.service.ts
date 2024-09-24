@@ -28,4 +28,9 @@ export class PostsService{
     //et environment.prod.ts que nous avons crée et rempli
     return this.http.get<Post[]>(`${environment.apiUrl}posts`);
   }
+  addNewComment(postCommented:{comment:String,postId:number}):void{
+    //cette fonction permet l'ajout d'un commentaire et il sera appelé
+    //depuis le component PostListComponent
+    console.log(postCommented)
+  }
 }
