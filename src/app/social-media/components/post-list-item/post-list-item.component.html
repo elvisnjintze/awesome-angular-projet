@@ -4,13 +4,25 @@
         <span>{{ post.title | titlecase }}</span>
       </mat-card-title>
       <mat-card-subtitle>
-        <span>{{ post.createdDate | date }}</span>
+       <!--<span>{{ post.createdDate | date }}</span>--> 
+       <!--à la place de ce qui précède on affiche notre date avec un pipe personalisé
+       timeAgo que nous avons défini dans shared et dans le dossier
+       pipe-->
+       <span>{{ post.createdDate | timeAgo }}</span>
       </mat-card-subtitle>
     </mat-card-header>
+    <br>
+    <!--nous utilisons un pipe personnalisé usernamepipe
+    sur un objet tempuser que nius avons crée dans PostListItemComponent
+    ceci de mettre évidence notre compétence sur les pipes personnisés
+    -->
+      <span>{{tempuser | usernamepipe: 'en'}}</span>
     <mat-card-content>
       <img mat-card-image *ngIf="post.imageUrl as imageUrl" [src]="imageUrl" [alt]="post.title">
       <br>
-      <span class="post-content">{{ post.content }}</span>
+      <!-- nous allons utiliser notre pipe personnalisé dans le module shared
+       pour tronquer toues les description qui on plus de 50 carectères-->
+      <span class="post-content">{{ post.content | shorten:100}}</span>
     </mat-card-content>
     <mat-card-actions>
       <!--Le nom  newComment  vient du nom du  @Output  dans

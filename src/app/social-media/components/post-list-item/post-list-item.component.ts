@@ -16,6 +16,7 @@ import { CommentsComponent } from '../../../shared/components/comments/comments.
 })
 export class PostListItemComponent implements OnInit{
   @Input() post!: Post
+  tempuser={lastName:"njinte",firstName:"elvis william"}
   //nous allons émettre un évènement qui sera envoyé au parent de ce component
   //PostListComponent et cet évènement sera porté
   //par un objet appelé postCommented et sera déclenché par la méthode

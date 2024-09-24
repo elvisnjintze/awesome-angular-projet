@@ -5,9 +5,15 @@ import { MatCardModule } from '@angular/material/card'
 import { CommentsComponent } from './components/comments/comments.component';
 import { MaterialModule } from './material.module';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ShortenPipe } from './pipes/shoten.pipe';
+import { LastNameFirstName } from './pipes/lastnamefirtsname.pipe';
+import { TimeAgoPipe } from './pipes/time-ago.pipe';
 
 @NgModule({
-  declarations: [],
+  // nous avons conçu des pipes personalisés ShortenPipe
+  //et LastNameFirstName que nous déclarons et exportons(dans)
+  //pour etre utiliser dans toute l'application
+  declarations: [ShortenPipe,LastNameFirstName,TimeAgoPipe],
   //nous avons enlevé MatCardModule des imports et des exports
   // pour remplacer avec le module MaterialModule
   // qui concentre toutes les modules Matérial que nous allons utilisé
@@ -16,7 +22,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     CommonModule, MaterialModule,CommentsComponent,ReactiveFormsModule
   ],
   //exports: [MatToolbarModule,MatCardModule,CommentsComponent
-    exports:[CommentsComponent,MaterialModule,ReactiveFormsModule]
+    exports:[CommentsComponent,MaterialModule,ReactiveFormsModule,ShortenPipe, LastNameFirstName,TimeAgoPipe]
   
 })
 export class SharedModule { }
