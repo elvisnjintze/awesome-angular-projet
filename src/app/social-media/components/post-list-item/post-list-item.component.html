@@ -1,7 +1,13 @@
 <mat-card>
     <mat-card-header>
       <mat-card-title>
-        <span>{{ post.title | titlecase }}</span>
+        <!--nous utilisons ici des directives qui permettrons de souligner 
+        dans notre cas le titre en jaune et cette directive est defin dans
+        le dossier direstives du module share et dans un fichier que nous avions
+        appelé highligh.directive.ts et dont nous avons declaré et exporté 
+        dans shared.module dans c'est une directive qui sera utilisée dans toute notre
+        application-->
+        <span highlight >{{ post.title | titlecase }}</span>
       </mat-card-title>
       <mat-card-subtitle>
        <!--<span>{{ post.createdDate | date }}</span>--> 
