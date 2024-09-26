@@ -51,12 +51,19 @@ export class CommentsComponent implements OnInit{
   //nous controlons que avant d'envoyer un commentaire qui ne soit pas vide 
   //qu'il soit requis et que sa taille minimale soit de 10 caractère
   commentCtrl!:FormControl
-  listItemAnimationState: 'default' | 'active'='default'
+  //e vous propose de créer un dictionnaire qui associe l'index 
+  //du commentaire dans le tableau comments à son état :
+  animationStates: { [key: number]: 'default' | 'active' } = {};
+
+  //listItemAnimationState: 'default' | 'active'='default'
   constructor(private formBuilder: FormBuilder){}
   ngOnInit(): void {
     this.commentCtrl = this.formBuilder.control('',
       [Validators.required,
         Validators.minLength(10)]);
+        for (let index in this.comments) {
+          this.animationStates[index] = 'default';
+      }
   }
   //Dans le cas de CommentsComponent, l'objectif sera d'émettre 
   //le commentaire laissé par l'utilisateur. Vous pouvez donc 
@@ -68,10 +75,10 @@ export class CommentsComponent implements OnInit{
   this.newComment.emit(this.commentCtrl.value);
   this.commentCtrl.reset();
   }
-  onListItemMouseEnter():void{
-    this.listItemAnimationState = 'active'
+  onListItemMouseEnter(index:number):void{
+    this.animationStates[index] = 'active'
   }
-  onListItemMouseLeave():void{
-    this.listItemAnimationState = 'default'
+  onListItemMouseLeave(index:number):void{
+    this.animationStates[index] = 'default'
   }
 }
