@@ -3,6 +3,8 @@ import { RouterOutlet } from '@angular/router';
 import { CoreModule } from './core/core.module';
 import { HeaderComponent } from './core/components/header/header.component';
 import { CommonModule } from '@angular/common';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+
 
 @Component({
   selector: 'app-root',

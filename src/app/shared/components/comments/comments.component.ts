@@ -10,13 +10,32 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-comments',
   standalone: true,
   imports: [MaterialModule,CommonModule,ReactiveFormsModule],
   templateUrl: './comments.component.html',
-  styleUrl: './comments.component.scss'
+  styleUrl: './comments.component.scss',
+  animations: [trigger('listItem', [
+    state('default', style({
+      transform: 'scale(1)',
+      'background-color': 'white',
+      'z-index': 1
+    })),
+    state('active', style({
+      transform: 'scale(1.05)',
+      'background-color': 'rgb(201, 157, 242)',
+      'z-index': 2
+    })),
+    transition('default => active', [
+      animate('100ms ease-in-out')
+    ]),
+    transition('active => default', [
+      animate('500ms ease-in-out')
+    ]),
+  ])]
 })
 export class CommentsComponent implements OnInit{
   @Input() comments!: Comment[]
@@ -32,6 +51,7 @@ export class CommentsComponent implements OnInit{
   //nous controlons que avant d'envoyer un commentaire qui ne soit pas vide 
   //qu'il soit requis et que sa taille minimale soit de 10 caractère
   commentCtrl!:FormControl
+  listItemAnimationState: 'default' | 'active'='default'
   constructor(private formBuilder: FormBuilder){}
   ngOnInit(): void {
     this.commentCtrl = this.formBuilder.control('',
@@ -47,5 +67,11 @@ export class CommentsComponent implements OnInit{
   }
   this.newComment.emit(this.commentCtrl.value);
   this.commentCtrl.reset();
+  }
+  onListItemMouseEnter():void{
+    this.listItemAnimationState = 'active'
+  }
+  onListItemMouseLeave():void{
+    this.listItemAnimationState = 'default'
   }
 }

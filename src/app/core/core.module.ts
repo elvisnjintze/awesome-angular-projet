@@ -5,6 +5,7 @@ import { SharedModule } from '../shared/shared.module';
 import { Router } from 'express';
 import { RouterModule } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 
@@ -14,7 +15,10 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
   //au serveur. Puisque HttpClientModule ne sera importé 
   //qu'une fois dans l'application, c'est un candidat parfait 
   //pour être importé dans CoreModule :
-  imports: [CommonModule,SharedModule,RouterModule,HttpClientModule],
+  imports: [CommonModule,
+    SharedModule,
+    RouterModule,HttpClientModule,
+  ],
   exports: [HeaderComponent]
 })
 export class CoreModule { }
