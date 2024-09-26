@@ -5,4 +5,7 @@ ul {
   li {
     display: inline-block;
   }
-  
+  mat-toolbar{
+    position: fixed;
+    z-index: 1000;
+  }
