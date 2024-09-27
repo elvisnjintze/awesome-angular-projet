@@ -35,6 +35,18 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
     transition('active => default', [
       animate('500ms ease-in-out')
     ]),
+    transition('void => *', [
+      style({
+          transform: 'translateX(-100%)',
+          opacity: 0,
+          'background-color': 'rgb(201, 157, 242)',
+      }),
+      animate('500ms ease-out', style({
+          transform: 'translateX(0)',
+          opacity: 1,
+          'background-color': 'white',
+      }))
+  ])
   ])]
 })
 export class CommentsComponent implements OnInit{
@@ -72,6 +84,17 @@ export class CommentsComponent implements OnInit{
     if (this.commentCtrl.invalid) {
       return;
   }
+  // pour essayer une fonction d'animation particulière partant
+  // du vide, on va faire quelque chose de particulier
+  //ajouter un commentaire que nous n'allons pas enregistrer dans le serveur
+  //avec cette suite de comande
+  const maxId = Math.max(...this.comments.map(comment => comment.id));
+    this.comments.unshift({
+        id: maxId + 1,
+        comment: this.commentCtrl.value,
+        createdDate: new Date().toISOString(),
+        userId: 1
+    });
   this.newComment.emit(this.commentCtrl.value);
   this.commentCtrl.reset();
   }

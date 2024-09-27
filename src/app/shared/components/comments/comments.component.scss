@@ -1,5 +1,6 @@
 mat-list-item {
     border-bottom: thin solid #555;
+    width: 95%;
   }
   .comments-row {
     display: flex;
@@ -7,11 +8,11 @@ mat-list-item {
     padding-top: 10px;
     justify-content: space-around;
     align-items: center;
-    width: 100%;
+    width: 80%;
   }
   
   mat-form-field {
-    width: 100%;
+    width: 400px;
     input{ width: 80%;}
   }
   .alert{
