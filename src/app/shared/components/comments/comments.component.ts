@@ -10,7 +10,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatCardModule } from '@angular/material/card';
 import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
-import { animate, state, style, transition, trigger } from '@angular/animations';
+import { animate, animateChild, group, query, sequence, stagger, state, style, transition, trigger } from '@angular/animations';
+import { TimeAgoPipe } from '../../pipes/time-ago.pipe';
 
 @Component({
   selector: 'app-comments',
@@ -18,7 +19,17 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
   imports: [MaterialModule,CommonModule,ReactiveFormsModule],
   templateUrl: './comments.component.html',
   styleUrl: './comments.component.scss',
-  animations: [trigger('listItem', [
+  animations: [
+    trigger('list',[
+      transition(':enter', [
+        query('@listItem', [
+            stagger(250, [
+                animateChild()
+            ])
+        ])
+    ])
+    ]),
+    trigger('listItem', [
     state('default', style({
       transform: 'scale(1)',
       'background-color': 'white',
@@ -35,7 +46,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
     transition('active => default', [
       animate('500ms ease-in-out')
     ]),
-    transition('void => *', [
+    /*transition('void => *', [
       style({
           transform: 'translateX(-100%)',
           opacity: 0,
@@ -46,9 +57,50 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
           opacity: 1,
           'background-color': 'white',
       }))
-  ])
-  ])]
-})
+  ]),*/
+  transition(':enter', [
+    /*on peut remplacer ceci:*/ 
+    /*query('span',[style({opacity:0})])*/
+    /*ceci dans le but d'animer séparement le texte et la date par*/
+    query('.comment-text, .comment-date',[style({opacity:0})]),
+    style({
+        transform: 'translateX(-100%)',
+        opacity: 0,
+        'background-color': 'rgb(201, 157, 242)',
+    }),
+    animate('250ms ease-out', style({
+        transform: 'translateX(0)',
+        opacity: 1,
+        'background-color': 'white',
+        
+    })),
+    group([
+      sequence([
+        animate('250ms', style({
+            'background-color': 'rgb(201,157,242)'
+        })),
+        animate('250ms', style({
+            'background-color': 'white'
+        })),
+    ]),
+      query('.comment-text', [
+        
+        animate('1000ms', style({
+            opacity: 1
+        }))
+    ]),
+    query('.comment-date', [
+        
+      animate('2500ms', style({
+          opacity: 1
+      }))
+  ])])
+])
+    
+    ],
+  ),
+]})
+  
 export class CommentsComponent implements OnInit{
   @Input() comments!: Comment[]
   //à la différence de @input qui attent une liste de comment 
