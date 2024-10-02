@@ -1,0 +1,79 @@
+<br>
+<br>
+<mat-card [formGroup]="mainForm" class="main-form">
+    <mat-card-title>Inscription</mat-card-title>
+    <mat-card class="form-card" formGroupName="personalInfo">
+        <mat-card-subtitle>Informationss personnelles</mat-card-subtitle>
+        <!--La classe  .form-row  permet d'avoir deux  input  disposés correctement 
+        sur une seule ligne.-->
+        <div class="form-row">
+            <mat-form-field appearance="fill">
+                <mat-label>Prénom(s)</mat-label>
+                <input type="text" matInput formControlName="firstName">
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+                <mat-label>Nom(s)</mat-label>
+                <input type="text" matInput formControlName="lastName">
+            </mat-form-field>
+        </div>
+    </mat-card>
+    <mat-card class="form-card">
+        <mat-card-subtitle>Comment préférez-vous que l'on vous contacte ?</mat-card-subtitle>
+        <mat-radio-group [formControl]="contactPreferenceCtrl">
+            <mat-radio-button value="email">Mail</mat-radio-button>
+            <mat-radio-button value="phone">Téléphone</mat-radio-button>
+        </mat-radio-group>
+    </mat-card>
+    <mat-card class="form-card" [formGroup]="emailForm">   
+        <mat-card-subtitle>Email</mat-card-subtitle>
+        <div class="form-row">
+            <mat-form-field appearance="fill">
+                <mat-label>entrez votre adresse mail</mat-label>
+                <input type="text" matInput formControlName="email">
+            </mat-form-field>
+            <mat-form-field appearance="fill">
+                <mat-label>confirmez votre adresse mail</mat-label>
+                <input type="text" matInput formControlName="confirm">
+            </mat-form-field>
+        </div>
+    </mat-card>
+    <mat-card class="form-card">
+        <mat-card-subtitle>Téléphone</mat-card-subtitle>
+        <mat-form-field appearance="fill">
+            <mat-label>téléphone</mat-label>
+            <input type="text" matInput formControlName="phone">
+        </mat-form-field>
+    </mat-card>
+    <mat-card class="form-card" [formGroup]="loginInfoForm">
+        <mat-card-subtitle>Informations de connexion</mat-card-subtitle>
+        <mat-form-field appearance="fill">
+            <mat-label>username</mat-label>
+            <input type="text" matInput formControlName="username">
+        </mat-form-field>
+        <div class="form-row">
+            <mat-form-field>
+                <mat-label>password</mat-label>
+                <input type="text" matInput formControlName="password">
+            </mat-form-field>
+            <mat-form-field>
+                <mat-label>corfirm passwrd</mat-label>
+                <input type="text" matInput formControlName="confirmPassword">
+            </mat-form-field>
+        </div>
+    </mat-card>
+
+    <mat-card-actions *ngIf="mainForm.valid">
+        <button mat-flat-button color="primary" (click)="onSubmitForm()">ENREGISTRER</button>
+    </mat-card-actions>
+</mat-card>
+
+<!--Parenthèse !
+Dans quels cas choisir  [formGroup]  ,  formGroupName  ,  
+[formControl]  ,  formControlName  ? Il n'y a pas de règle d'or ici. 
+Si vous avez des FormGroups et FormControls nommés, vous pouvez toujours
+ y lier les contrôles du template directement ; mais attention : 
+ ça crée une liaison intime entre le TypeScript et le HTML. Si un jour 
+ vous souhaitez changer l'implémentation du FormControl et le passer à 
+FormBuilder.group , il vous faudra changer le template aussi.Il n'y a 
+pas de bonne ou de mauvaise réponse : faites ce qui vous semble être le 
+plus logique et le plus lisible dans chaque cas.-->
