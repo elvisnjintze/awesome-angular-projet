@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { MatCardActions, MatCardModule } from '@angular/material/card';
 import { MatFormField, MatFormFieldControl, MatFormFieldModule } from '@angular/material/form-field';
 import { SharedModule } from '../../../shared/shared.module';
-import { map, Observable, startWith } from 'rxjs';
+import { map, Observable, startWith, tap } from 'rxjs';
 
 @Component({
   selector: 'app-complex-form',
@@ -114,17 +114,53 @@ export class ComplexFormComponent implements OnInit {
 
 }
 
-initFormObservables():void{
+private initFormObservables():void{
   //Nos deux Observables dépendent des changements du contrôle  
   //contactPreferenceCtrl  , donc générons-les à partir de ses  
   //valueChanges 
   this.showEmailCtrl$ = this.contactPreferenceCtrl.valueChanges.pipe(
     startWith(this.contactPreferenceCtrl.value),
     map(preference => preference === 'email'),
+    tap(showEmailCtrl=>{
+      if (showEmailCtrl){
+        this.emailCtrl.addValidators([
+          Validators.required,//ce champ est obligatoire 
+          Validators.email// ce champ doit avoir la syntaxe d'un email
+        ])
+        this.confirmEmailCtrl.addValidators([
+          Validators.required,
+          Validators.email
+        ])
+      }else{
+        this.emailCtrl.clearValidators //quand il n'est pas selectionné il 
+        //faut enlever les validators sinon le main-form ne sera jamais valide
+        this.confirmEmailCtrl.clearValidators //quand il n'est pas selectionné il 
+        //faut enlever les validators sinon le main-form ne sera jamais valide
+      }
+      this.emailCtrl.updateValueAndValidity
+      this.confirmEmailCtrl.updateValueAndValidity
+    })
+    
 );
 this.showPhoneCtrl$ = this.contactPreferenceCtrl.valueChanges.pipe(
   startWith(this.contactPreferenceCtrl.value),
-    map(preference => preference === 'phone')
+    map(preference => preference === 'phone'),
+    //Puisque les changements de validation ont lieu lorsque 
+    //l'utilisateur change son  contactPreference , nous pouvons
+    //ajouter la logique nécessaire dans les pipes des Observables
+    tap(showPhoneCtrl=>{
+      if (showPhoneCtrl){
+        this.phoneCtrl.addValidators([
+          Validators.required,//ce champ est pbligatoire
+          Validators.minLength(9),//la longueur minimale
+          Validators.maxLength(9)//la longueur max
+        ])
+      }else{
+        this.phoneCtrl.clearValidators()//quand il n'est pas selectionné il 
+        //faut enlever les validators sinon le main-form ne sera jamais valide
+      this.phoneCtrl.updateValueAndValidity()//sans ceci rien ne fonctionne
+    }
+    })
 );
 }
 
