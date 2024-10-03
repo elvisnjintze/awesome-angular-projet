@@ -13,7 +13,8 @@ mat-form-field {
 }
 
 .form-card {
-  margin: 20px 0;
+  margin: 20px 10px;
+  padding: 0 10px;
 }
 
 .mat-radio-button ~ .mat-radio-button {
@@ -45,4 +46,8 @@ mat-card-actions {
 
 .error-text {
   color: red;
+}
+mat-card-actions{
+  display: flex;
+  justify-content: center;
 }

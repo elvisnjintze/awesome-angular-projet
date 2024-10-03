@@ -3,13 +3,14 @@ import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } 
 import { MaterialModule } from '../../../shared/material.module';
 import { CommonModule } from '@angular/common';
 import { MatCardActions, MatCardModule } from '@angular/material/card';
-import { MatFormField, MatFormFieldControl } from '@angular/material/form-field';
+import { MatFormField, MatFormFieldControl, MatFormFieldModule } from '@angular/material/form-field';
 import { SharedModule } from '../../../shared/shared.module';
+import { map, Observable, startWith } from 'rxjs';
 
 @Component({
   selector: 'app-complex-form',
   standalone: true,
-  imports: [SharedModule,CommonModule,ReactiveFormsModule,MatFormField,],
+  imports: [SharedModule,CommonModule,ReactiveFormsModule],
   templateUrl: './complex-form.component.html',
   styleUrl: './complex-form.component.scss'
 })
@@ -44,11 +45,23 @@ export class ComplexFormComponent implements OnInit {
     // n'est fait sur ce champ comme par exemple comparer les deux champs
     //paswordCtrl et confirmPaswordCtrl
   phoneCtrl!: FormControl
+  //Nous utiliserons les Observables  valueChanges  pour modifier 
+  //l'affichage et la validation du formulaire, et nous réagirons 
+  //directement à la validité des champs pour afficher des messages 
+  //d'erreur utiles à l'utilisateur.
+  //une fois ces observables crées, il faut les initialiser avec la méthode
+  //initFormObservables()que nous definirons
+  showEmailCtrl$!: Observable<boolean>
+  showPhoneCtrl$!: Observable<boolean>
+  //Nous auron besoin d'un objet FormBuilder pour povoir construire 
+  //notre formulaire (indispensable pour tous les formulaires)
   constructor(private formBuilder: FormBuilder){}
 
   ngOnInit(): void {
     this.initFormControls()
     this.initMainForm()
+    this.initFormObservables()
+
   }
   
     
@@ -87,7 +100,7 @@ export class ComplexFormComponent implements OnInit {
       phone: this.phoneCtrl,
       loginInfo: this.loginInfoForm
   });
-  //usqu'ici, tout ce que vous avez passé à  FormBuilder.group , c'étaient 
+  //jusqu'ici, tout ce que vous avez passé à  FormBuilder.group , c'étaient 
   //des FormControls. Ici, vous passez également des FormGroups !
   //Avec ce montage, vous profitez pleinement des avantages des 
   //FormGroups et de ceux des FormControls :vous pouvez traiter des 
@@ -99,6 +112,20 @@ export class ComplexFormComponent implements OnInit {
   //ci-dessus vous offre plusieurs options.
 
 
+}
+
+initFormObservables():void{
+  //Nos deux Observables dépendent des changements du contrôle  
+  //contactPreferenceCtrl  , donc générons-les à partir de ses  
+  //valueChanges 
+  this.showEmailCtrl$ = this.contactPreferenceCtrl.valueChanges.pipe(
+    startWith(this.contactPreferenceCtrl.value),
+    map(preference => preference === 'email'),
+);
+this.showPhoneCtrl$ = this.contactPreferenceCtrl.valueChanges.pipe(
+  startWith(this.contactPreferenceCtrl.value),
+    map(preference => preference === 'phone')
+);
 }
 
   onSubmitForm():void{}
