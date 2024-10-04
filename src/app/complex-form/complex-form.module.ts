@@ -5,6 +5,7 @@ import { ComplexFormRoutingModule } from './complex-form-routing.module';
 import { SharedModule } from '../shared/shared.module';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ComplexFormService } from './services/complex-form.service';
+import { HttpClientModule } from '@angular/common/http';
 
 
 @NgModule({
@@ -13,7 +14,7 @@ import { ComplexFormService } from './services/complex-form.service';
     CommonModule,
     ComplexFormRoutingModule,
     SharedModule,
-    ReactiveFormsModule
+    ReactiveFormsModule, HttpClientModule
   ],
   providers:[ComplexFormService]
 })

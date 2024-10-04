@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MaterialModule } from '../../../shared/material.module';
 import { CommonModule } from '@angular/common';
 import { MatCardActions, MatCardModule } from '@angular/material/card';
 import { MatFormField, MatFormFieldControl, MatFormFieldModule } from '@angular/material/form-field';
 import { SharedModule } from '../../../shared/shared.module';
 import { map, Observable, startWith, tap } from 'rxjs';
+import { ComplexFormService } from '../../services/complex-form.service';
 
 @Component({
   selector: 'app-complex-form',
@@ -55,8 +56,11 @@ export class ComplexFormComponent implements OnInit {
   showPhoneCtrl$!: Observable<boolean>
   //Nous auron besoin d'un objet FormBuilder pour povoir construire 
   //notre formulaire (indispensable pour tous les formulaires)
-  constructor(private formBuilder: FormBuilder){}
-
+  constructor(private formBuilder: FormBuilder,private complexFormService: ComplexFormService){}
+  //cette variable permet de savoir si oui ou non le
+  //formulaire est entrain d'etre chargé dans le serveur ceci afin
+  //de créer une Progress-Bar qui va permettre de faire patienter l'user
+  loading = false 
   ngOnInit(): void {
     this.initFormControls()
     this.initMainForm()
@@ -167,7 +171,41 @@ private setPhoneValidators(showPhoneCtrl: boolean){
   this.phoneCtrl.updateValueAndValidity()//sans ceci rien ne fonctionne
 
 }
+getFormControlErrorText(ctrl: AbstractControl) {
+  if (ctrl.hasError('required')) {
+      return 'Ce champ est requis';
+  } else if(ctrl.hasError('email')){
+      return 'merci de renseigner une adresse valide';
+        }else if(ctrl.hasError('maxlength')){
+              return'ce numeros de téléphone contient trop de chiffres'
+              }else if(ctrl.hasError('minlength')){
+                  return 'ce numeros de téléphone contient moins de chiffres'
+                  }else {
+                      return 'Ce champ contient une erreur'
+                        }
+}
 
-  onSubmitForm():void{}
+  onSubmitForm():void{
+    this.loading = true
+    this.complexFormService.saveUserInfo(this.mainForm.value).pipe(
+      tap(saved=>{
+        this.loading = false
+        if (saved){
+          //Dans le cas d'un enregistrement réussi, vous réinitialisez
+          // le formulaire (vous videz tous les champs). Il faut donc 
+          //passer la valeur  'email'  à  contactPreferenceCtrl  pour 
+          //retrouver le vrai état initial du formulaire.
+          //La méthode  patchValue , par défaut, fait émettre 
+          //l'Observable  valueChanges  du FormControl – la MatCard 
+          //s'affichera, donc, et la validation sera ajustée correctement.
+          this.mainForm.reset()
+          this.contactPreferenceCtrl.patchValue('email')
+        }else{
+          console.log('l\'enregitrement du formulaire a échoué')
+        }
+      })
+    ).subscribe()//il faut souscrire à cet observateur pour voir quelque chose
+                 //se déroulerer
+  }
 
 }

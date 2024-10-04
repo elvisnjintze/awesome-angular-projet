@@ -11,7 +11,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatPseudoCheckboxModule } from '@angular/material/core';
 import { MatRadioModule } from '@angular/material/radio'
-
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner'
 @NgModule({
   exports: [
     MatToolbarModule,
@@ -22,7 +22,8 @@ import { MatRadioModule } from '@angular/material/radio'
     MatFormFieldModule,
     MatInputModule,
     MatPseudoCheckboxModule,
-    MatRadioModule
+    MatRadioModule,
+    MatProgressSpinnerModule
     
   ]
 })
