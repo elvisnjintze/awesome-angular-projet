@@ -7,6 +7,8 @@ import { MatFormField, MatFormFieldControl, MatFormFieldModule } from '@angular/
 import { SharedModule } from '../../../shared/shared.module';
 import { map, Observable, startWith, tap } from 'rxjs';
 import { ComplexFormService } from '../../services/complex-form.service';
+import { validValidator } from '../../validators/valid.validator';
+import { confirmEqualValidator } from '../../validators/cofirm-equal.valodator';
 
 @Component({
   selector: 'app-complex-form',
@@ -61,6 +63,10 @@ export class ComplexFormComponent implements OnInit {
   //formulaire est entrain d'etre chargé dans le serveur ceci afin
   //de créer une Progress-Bar qui va permettre de faire patienter l'user
   loading = false 
+  //nous créons de nouveaux observable qui font nour permettre d'afficher un message d'erreur 
+  //si recpectivement les deux champs emails et les deux champs password ne sont pas identique
+  showEmailError$!: Observable<boolean>
+  showPasswordError$!: Observable<boolean>
   ngOnInit(): void {
     this.initFormControls()
     this.initMainForm()
@@ -80,7 +86,13 @@ export class ComplexFormComponent implements OnInit {
     this.emailForm = this.formBuilder.group({
       email: this.emailCtrl,
       confirm: this.confirmEmailCtrl
+    },{validators: [confirmEqualValidator('email', 'confirm')],//(attention validators s'écrit bien avec v minuscule)
+       updateOn: 'blur'
     })
+    //nous avons crée un validator personnalisé dans le dossier validators 
+    //ayant pour nom confirm-aqual.validator qui permet de comparer si
+    //deux fornControl ont la meme valeur et ce validatoe s'applique à un formGroup
+    
     this.passwordCtrl = this.formBuilder.control('',Validators.required)
     this.confirmPasswordCtrl = this.formBuilder.control('',Validators.required)
     //nous contruisons alors le formgroup qui englobera le password
@@ -89,7 +101,10 @@ export class ComplexFormComponent implements OnInit {
       username: ['', Validators.required],
       password: this.passwordCtrl,
       confirmPassword: this.confirmPasswordCtrl
+  },{validators: [confirmEqualValidator('password', 'confirmPassword')],
+     updateOn: 'blur'
   });
+  //validation des deux formControl password et confirmPassword(attention validators s'écrit bien avec v minuscule)
     this.contactPreferenceCtrl = this.formBuilder.control('email')
     this.phoneCtrl = this.formBuilder.control('')
 
@@ -136,13 +151,29 @@ this.showPhoneCtrl$ = this.contactPreferenceCtrl.valueChanges.pipe(
     //ajouter la logique nécessaire dans les pipes des Observables
     tap(showPhoneCtrl=>this.setPhoneValidators(showPhoneCtrl))
 );
+
+this.showEmailError$ = this.emailForm.statusChanges.pipe(
+  map(status=>status=='INVALID' &&
+    this.emailCtrl.value &&
+    this.confirmEmailCtrl.value 
+    
+  )
+)
+this.showPasswordError$ = this.loginInfoForm.statusChanges.pipe(
+  map(status=>status=='INVALID' &&
+    this.passwordCtrl.value &&
+    this.confirmPasswordCtrl.value
+  )
+)
+
 }
 
 private setEmailValidators(showEmailCtrl: boolean){
   if (showEmailCtrl){
     this.emailCtrl.addValidators([
       Validators.required,//ce champ est obligatoire 
-      Validators.email// ce champ doit avoir la syntaxe d'un email
+      Validators.email,// ce champ doit avoir la syntaxe d'un email
+      //validValidator()// ceci est un validator personalisé que nous avont crée dans le dossier calidators
     ])
     this.confirmEmailCtrl.addValidators([
       Validators.required,
@@ -180,12 +211,17 @@ getFormControlErrorText(ctrl: AbstractControl) {
               return'ce numeros de téléphone contient trop de chiffres'
               }else if(ctrl.hasError('minlength')){
                   return 'ce numeros de téléphone contient moins de chiffres'
-                  }else {
+                  }else if (ctrl.hasError('validValidator')) {//notre fameux validator personnalisé dans le dossier validators
+                    return 'Ce texte ne contient pas le mot VALID';
+                   }else{
                       return 'Ce champ contient une erreur'
                         }
 }
 
   onSubmitForm():void{
+    //il faut écouter l'enregistrement du formulaire dans le serveur et lancer notre animation d'attente
+    //cette animation est lance en écoutant la variable loading qui est à true lorsque 
+    //le formulaire est envoyé au serveur et devient false une fois le formulaire enregistré
     this.loading = true
     this.complexFormService.saveUserInfo(this.mainForm.value).pipe(
       tap(saved=>{

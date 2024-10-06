@@ -26,6 +26,7 @@
             <mat-radio-button value="phone">Téléphone</mat-radio-button>
         </mat-radio-group>
     </mat-card>
+
     <mat-card  class="form-card" [formGroup]="emailForm" *ngIf="showEmailCtrl$ | async" >   
         <mat-card-subtitle>Email</mat-card-subtitle>
         <div class="form-row">
@@ -44,6 +45,7 @@
                 <mat-error>{{ getFormControlErrorText(confirmEmailCtrl) }}</mat-error>
             </mat-form-field>
         </div>
+        <small class="error-text" *ngIf="showEmailError$ | async">Les deux adresses ne correspondent pas</small>
     </mat-card>
     
     <mat-card class="form-card" *ngIf="showPhoneCtrl$ | async" >
@@ -66,15 +68,16 @@
         <div class="form-row">
             <mat-form-field>
                 <mat-label>password</mat-label>
-                <input type="text" matInput formControlName="password">
+                <input type="password" matInput formControlName="password">
                 <mat-error>ce champ est requis</mat-error>
             </mat-form-field>
             <mat-form-field>
                 <mat-label>corfirm passwrd</mat-label>
-                <input type="text" matInput formControlName="confirmPassword">
+                <input type="password" matInput formControlName="confirmPassword">
                 <mat-error>ce champ est requis</mat-error>
             </mat-form-field>
         </div>
+        <small class="error-text" *ngIf="showPasswordError$ | async">Les deux mots de passe ne sont pas identiques</small>
     </mat-card>
 
     <mat-card-actions *ngIf="mainForm.valid">
