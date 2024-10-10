@@ -1,12 +1,13 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, Observable } from "rxjs";
+import { BehaviorSubject, delay, Observable, tap } from "rxjs";
 import { Candidate } from "../models/candidate.model";
+import { environment } from "../../../environments/environment.prod";
 
 
 @Injectable()
 export class CandidateService {
-    constructor(http:HttpClient){}
+    constructor(private http:HttpClient){}
     //Il y a deux éléments de state – des sources de données – à exposer dans CandidatesService :
     //loading$  – qui émettra  true  ou  false  selon qu'un chargement est en cours ou non ;
     //candidates$  – qui émettra des tableaux de  Candidate .
@@ -32,4 +33,15 @@ export class CandidateService {
          * Observables recevront cette nouvelle donnée.*/
         this._loading$.next(loading);
       }
+
+      getCandidatesFromServer() {
+        this.setLoadingStatus(true);
+        this.http.get<Candidate[]>(`${environment.apiUrl}candidates`).pipe(
+          delay(5000),
+          tap(candidates => {
+            this._candidates$.next(candidates);
+            this.setLoadingStatus(false);
+          })
+        ).subscribe();
+    }
 }

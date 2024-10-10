@@ -1,0 +1,85 @@
+mat-card {
+    margin: 50px auto;
+    padding: 0px;
+    height: 90vh;
+    max-width: 600px; /* Limite la largeur de la carte */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ajoute une ombre légère */
+    border-radius: 10px; /* Coins arrondis */
+    overflow: scroll;
+    
+    mat-card-title-group {
+      margin-bottom: 20px; /* Espacement sous le titre */
+      text-align: center;
+    }
+    
+    mat-spinner {
+      display: block;
+      margin: 20px auto; /* Centrer le spinner */
+    }
+  }
+  
+  mat-nav-list {
+    padding: 0;
+  
+    a[mat-list-item] {
+      display: flex;
+      align-items: end;
+      padding:20px;
+      margin: 10px 0;
+      border-radius: 8px;
+      text-decoration: none;
+      background-color: #f9f9f9;
+      transition: background-color 0.3s ease;
+      height: 80px;
+      
+      &:hover {
+        background-color: #f0f0f0; /* Change de couleur au survol */
+      }
+      
+      img[matListAvatar] {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%; /* Rendre l'image circulaire */
+        object-fit: cover; /* Assure un bon ajustement de l'image */
+        margin-right: 15px;
+        margin-top: 20px;
+      }
+  
+      h3 {
+        font-size: 1.2em;
+        margin-top: 10px;
+        padding: 0;
+        color: #333;
+      }
+  
+      p {
+        margin: 0;
+        font-size: 0.9em;
+        color: #666;
+      }
+    }
+  }
+  
+  @media (max-width: 600px) {
+    mat-card {
+      max-width: 100%;
+      margin: 10px;
+    }
+    
+    a[mat-list-item] {
+      flex-direction: column;
+      align-items: flex-start;
+  
+      img[matListAvatar] {
+        margin-bottom: 10px;
+      }
+  
+      h3 {
+        margin-bottom: 5px;
+      }
+    }
+  }
+  .contenu{
+    display: flex;
+    height: 100px;
+  }
