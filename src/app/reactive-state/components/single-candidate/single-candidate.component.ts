@@ -5,6 +5,7 @@ import { CandidateService } from '../../services/candidatas.service';
 import { SharedModule } from '../../../shared/shared.module';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-single-candidate',
@@ -19,7 +20,7 @@ export class SingleCandidateComponent implements OnInit{
  //et d'un candidat
   loading$!: Observable<boolean>
  candidate$!: Observable<Candidate>
- constructor(private candidatesServices: CandidateService, private route: ActivatedRoute, private router: Router){}
+ constructor(private candidatesServices: CandidateService, private route: ActivatedRoute, private router: Router, private http:HttpClient){}
 
   ngOnInit(): void {
     this.initObservable()
