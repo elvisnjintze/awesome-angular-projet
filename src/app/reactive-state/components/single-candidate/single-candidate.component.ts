@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { Observable, switchMap } from 'rxjs';
+import { Observable, switchMap, take, tap } from 'rxjs';
 import { Candidate } from '../../models/candidate.model';
 import { CandidateService } from '../../services/candidatas.service';
 import { SharedModule } from '../../../shared/shared.module';
@@ -37,8 +37,38 @@ export class SingleCandidateComponent implements OnInit{
       switchMap(params => this.candidatesServices.getCandidateById(+params['id']))
   );
   }
-  onHire():void{}
+  
   onGoBack():void{ this.router.navigateByUrl('/reactive-state/candidates');}
-  onRefuse():void{}
+
+  onRefuse():void{
+    /**nous avons besoin de l' id du candidat pour le supprimer, donc vous partez de
+     *  l'Observable  candidate$ .nous utilisons take(1) car la logique ici ne doit
+     *  être exécutée qu'une seule fois par appel.
+      nous déclenchons la suppression et nous redirigeons immédiatement l'utilisateur.
+      Du coup, l'utilisateur se retrouve sur la list-view avec un spinner pendant une 
+      seconde, puis la liste des candidats se met à jour correctement !
+      Nous pouvons toujours utiliser Git pour annuler les modifications de db.json dans 
+      le dossier du backend pour revenir en arrière au niveau de la base de données, retrouvant 
+      la liste des candidats d'origine. */
+    this.candidate$.pipe(
+      take(1),
+      tap(candidate => {
+          this.candidatesServices.refuseCandidate(candidate.id)
+          this.onGoBack()
+      })
+  ).subscribe();
+  }
+
+  onHire():void{
+    //nous faisons la meme chose que dans le cas de la mèthode onRefuse
+    //le candidat sera embauché et le champ compagny sera changé en Snapface Ltd
+    this.candidate$.pipe(
+      take(1),
+      tap(candidate => {
+          this.candidatesServices.hireCandidate(candidate.id);
+          this.onGoBack();
+      })
+  ).subscribe();
+  }
 
 }

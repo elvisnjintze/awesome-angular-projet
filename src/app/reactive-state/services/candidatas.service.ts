@@ -1,6 +1,6 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, delay, map, Observable, tap } from "rxjs";
+import { BehaviorSubject, delay, map, Observable, switchMap, take, tap } from "rxjs";
 import { Candidate } from "../models/candidate.model";
 import { environment } from "../../../environments/environment.prod";
 
@@ -68,5 +68,57 @@ export class CandidateService {
           map(candidates => candidates.filter(candidate => candidate.id === id)[0])
       );
   }
+
+  refuseCandidate(id: number): void{
+    /**Il s'agit d'une suppression pessimiste. nous attendons donc que la requête réussisse
+     *  avant de mettre à jour les données côté application :quand la requête réussit, nous 
+     * transférons l'Observable vers les candidates$ à l'instant t ;
+    si nous ne mettons pas le take(1) , nous finirons dans un infinite loop ! Tout ce qui vient 
+    après ce switchMap ne doit être exécuté qu'une seule fois par suppression ;
+    nous utilisons map pour modifier le tableau, retournant un tableau qui contient tous les 
+    candidats sauf celui qui comporte l' id passé en argument ;
+    nous faisons émettre la nouvelle liste de candidats et l'état de chargement.
+    C'est cette dernière étape qui fait toute la magie du state management réactif : le reste 
+    de l'application n'a pas besoin de suivre l'avancée de la requête de suppression. Les components 
+    qui sont souscrits aux Observables du service vont simplement afficher les nouvelles données 
+    qui sont émises ! */
+    this.setLoadingStatus(true)
+    this.http.delete(`${environment.apiUrl}candidates/${id}`).pipe(
+      tap(() => {
+        console.log('Suppression réussie pour le candidat avec ID:', id);
+      }),
+      delay(1000),
+      switchMap(()=>this.candidates$),
+      take(1),
+      map(candidates =>candidates.filter(candidate => candidate.id !== id)),
+      tap(candidates => {
+        this._candidates$.next(candidates)
+        this.setLoadingStatus(false)
+      })
+    ).subscribe()
+  }
+
+  hireCandidate(id: number): void {
+    /**nous allons pouvoir modifier l'information sur la compay d'un candidat lorsqu'on clique sur le
+     * bouton hire afin de l'embaucher. Ainsi la compagny qui candidat deviendra Snapface Ltd 
+     * nous utilisons ici l'approche optinikste c-à-d que nous modifion notre instance avant de le soumettre
+     * au serveur
+     */
+    this.candidates$.pipe(
+        take(1),
+        map(candidates => candidates
+            .map(candidate => candidate.id === id ?
+                { ...candidate, company: 'Elco Business & Technologies' } :
+                candidate
+            )
+        ),
+        tap(updatedCandidates => this._candidates$.next(updatedCandidates)),
+        switchMap(updatedCandidates =>
+          //envoi de la requete avec le nouveau tableau mis à jour
+            this.http.patch(`${environment.apiUrl}candidates/${id}`,
+            updatedCandidates.find(candidate => candidate.id === id))
+        )
+    ).subscribe();
+}
 
 }

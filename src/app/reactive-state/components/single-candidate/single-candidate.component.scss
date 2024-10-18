@@ -1,9 +1,16 @@
 mat-card {
+    margin-top: 50px;
     text-align: center;
+    padding-top: 10px;
   }
   
   img {
-    border-radius: 50%;
+    align-self: center;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%; /* Rendre l'image circulaire */
+    object-fit: cover; /* Assure un bon ajustement de l'image */
+    
   }
   
   button {

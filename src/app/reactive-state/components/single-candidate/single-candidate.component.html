@@ -8,6 +8,8 @@
       </div>
     </ng-container>
     <mat-card-actions>
+        <!--si nous sommes au charghement active le spinner sinon pass à la balise ng-template avec 
+        l'id #buttons-->
       <mat-spinner *ngIf="loading$ | async; else buttons"></mat-spinner>
       <ng-template #buttons>
         <div class="action-buttons">
